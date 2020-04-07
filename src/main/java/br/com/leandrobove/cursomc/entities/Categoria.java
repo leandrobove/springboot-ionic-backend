@@ -1,4 +1,4 @@
-package br.com.leandrobove.cursomc.entity;
+package br.com.leandrobove.cursomc.entities;
 
 import java.io.Serializable;
 
