@@ -9,18 +9,27 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.leandrobove.cursomc.dto.ClienteDTO;
+import br.com.leandrobove.cursomc.dto.ClienteNewDTO;
+import br.com.leandrobove.cursomc.entities.Cidade;
 import br.com.leandrobove.cursomc.entities.Cliente;
+import br.com.leandrobove.cursomc.entities.Endereco;
+import br.com.leandrobove.cursomc.entities.enums.TipoCliente;
 import br.com.leandrobove.cursomc.exceptions.DataIntegrityException;
 import br.com.leandrobove.cursomc.exceptions.ObjectNotFoundException;
 import br.com.leandrobove.cursomc.repositories.ClienteRepository;
+import br.com.leandrobove.cursomc.repositories.EnderecoRepository;
 
 @Service
 public class ClienteService {
 
 	@Autowired
 	private ClienteRepository repo;
+
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 
 	public Cliente find(Integer id) {
 		Optional<Cliente> cliente = repo.findById(id);
@@ -43,10 +52,38 @@ public class ClienteService {
 		return c;
 	}
 
+	public Cliente fromDTO(ClienteNewDTO clienteDto) {
+
+		Cliente cliente = new Cliente(null, clienteDto.getNome(), clienteDto.getEmail(), clienteDto.getCpfOuCnpj(),
+				TipoCliente.toEnum(clienteDto.getTipo()));
+
+		Cidade cidade = new Cidade(clienteDto.getCidadeId(), null, null);
+
+		Endereco end = new Endereco(null, clienteDto.getLogradouro(), clienteDto.getNumero(),
+				clienteDto.getComplemento(), clienteDto.getBairro(), clienteDto.getCep(), cliente, cidade);
+
+		cliente.getEnderecos().add(end);
+		cliente.getTelefones().add(clienteDto.getTelefone1());
+
+		if (clienteDto.getTelefone2() != null) {
+			cliente.getTelefones().add(clienteDto.getTelefone2());
+		}
+		if (clienteDto.getTelefone2() != null) {
+			cliente.getTelefones().add(clienteDto.getTelefone3());
+		}
+
+		return cliente;
+	}
+
+	@Transactional
 	public Cliente insert(Cliente cliente) {
 		cliente.setId(null);
+		
+		cliente = repo.save(cliente);
 
-		return repo.save(cliente);
+		enderecoRepository.saveAll(cliente.getEnderecos());
+		
+		return cliente;
 	}
 
 	public Cliente update(Cliente obj) {
@@ -78,4 +115,5 @@ public class ClienteService {
 
 		return repo.findAll(pageRequest);
 	}
+
 }
