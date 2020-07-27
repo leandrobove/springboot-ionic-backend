@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,7 +51,9 @@ public class CategoriaResource {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@RequestBody Categoria obj, HttpServletRequest req) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDto, HttpServletRequest req) {
+
+		Categoria obj = service.fromDTO(objDto);
 
 		obj = service.insert(obj);
 
@@ -60,7 +63,9 @@ public class CategoriaResource {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Categoria cat) {
+	public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody CategoriaDTO catDto) {
+
+		Categoria cat = service.fromDTO(catDto);
 
 		cat.setId(id);
 

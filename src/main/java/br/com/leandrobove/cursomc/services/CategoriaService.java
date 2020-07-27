@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import br.com.leandrobove.cursomc.dto.CategoriaDTO;
 import br.com.leandrobove.cursomc.entities.Categoria;
 import br.com.leandrobove.cursomc.exceptions.DataIntegrityException;
 import br.com.leandrobove.cursomc.exceptions.ObjectNotFoundException;
@@ -58,8 +59,12 @@ public class CategoriaService {
 
 	public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		
+
 		return repo.findAll(pageRequest);
+	}
+
+	public Categoria fromDTO(CategoriaDTO dto) {
+		return new Categoria(dto.getId(), dto.getNome());
 	}
 
 }
