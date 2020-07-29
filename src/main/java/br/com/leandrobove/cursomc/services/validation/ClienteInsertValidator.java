@@ -6,13 +6,20 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.leandrobove.cursomc.dto.ClienteNewDTO;
+import br.com.leandrobove.cursomc.entities.Cliente;
 import br.com.leandrobove.cursomc.entities.enums.TipoCliente;
+import br.com.leandrobove.cursomc.repositories.ClienteRepository;
 import br.com.leandrobove.cursomc.resources.exceptions.FieldMessage;
 import br.com.leandrobove.cursomc.services.validation.utils.CpfAndCnpjValidator;
 
 public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
 
+	@Autowired
+	private ClienteRepository repo;
+	
 	@Override
 	public void initialize(ClienteInsert ann) {
 	}
@@ -37,6 +44,12 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
 				&& !CpfAndCnpjValidator.isValidCNPJ(objDto.getCpfOuCnpj())) {
 			// CNPJ INVALIDO MESSAGE
 			list.add(new FieldMessage("cpfOuCnpj", "CNPJ inválido."));
+		}
+		
+		Cliente obj = repo.findByEmail(objDto.getEmail());
+		
+		if(obj != null) {
+			list.add(new FieldMessage("email", "Este e-mail já está cadastrado"));
 		}
 
 		for (FieldMessage e : list) {
