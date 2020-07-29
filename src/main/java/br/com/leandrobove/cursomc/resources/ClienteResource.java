@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +52,7 @@ public class ClienteResource {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@RequestBody ClienteNewDTO clienteDto) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO clienteDto) {
 
 		Cliente cliente = service.fromDTO(clienteDto);
 
