@@ -25,7 +25,7 @@ public class Pedido implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
 	@JsonFormat(pattern = "dd/MM/yyyy hh:mm")
 	private Date instante;
 
@@ -99,6 +99,16 @@ public class Pedido implements Serializable {
 
 	public void setItens(Set<ItemPedido> itens) {
 		this.itens = itens;
+	}
+
+	public Double getTotal() {
+		double total = 0;
+
+		for (ItemPedido itemPedido : itens) {
+			total += itemPedido.getSubTotal();
+		}
+
+		return total;
 	}
 
 	@Override
